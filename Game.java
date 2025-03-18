@@ -14,19 +14,18 @@ public class Game extends JPanel {
     private int dustCooldown = 0;
     private static final int DUST_COOLDOWN_MAX = 10;
     private String scoreText;
+    private List<Level> levels;
+    private int currentLevel;
+
+
         public Game() {
-    
-            loadImages();
             setDoubleBuffered(true);
-            player = new Player(50, 50);    
-            map = new Map();
-            gameOver = false;
-            levelComplete = false;
-            isPaused = false;
+            loadImages();
+            initializeLevels();
+            currentLevel = 0;
+            startLevel(currentLevel);
             setPreferredSize(new Dimension(800,600));
             setFocusable(true);
-            requestFocusInWindow();
-            addKeyListener(player);
             scoreText = "Remaining Pieces: " + getTotalPuzzlePieces();
             particleEffects = new ArrayList<>();
             soundManager = SoundManager.getInstance();
@@ -34,12 +33,32 @@ public class Game extends JPanel {
             soundManager.playClip("background", true);
         
         }
-    
+
+        private void initializeLevels() {
+            levels = new ArrayList<>();
+            levels.add(new Level(1, 4, 2));
+            levels.add(new Level(2, 6, 4));
+            levels.add(new Level(3, 8, 6));
+        }
+
+        private void startLevel(int levelIndex) {
+            Level level = levels.get(levelIndex);
+            player = new Player(50, 50);
+            player.setInputEnabled(true);
+            addKeyListener(player);
+            map = new Map(level.getNumPuzzlePieces(), level.getNumTraps(), player);
+            gameOver = false;
+            levelComplete = false;
+            isPaused = false;
+            scoreText = "Remaining Pieces: " + getTotalPuzzlePieces();
+            if (particleEffects != null) particleEffects.clear();
+            requestFocusInWindow();
+        }
         private void loadImages() {
 
             ImageManager.loadImage("background", "resources/background.png");
 
-            
+
             ImageManager.loadImage("walk_up1", "resources/walk_up1.png");
             ImageManager.loadImage("walk_up2", "resources/walk_up2.png");
             ImageManager.loadImage("walk_up3", "resources/walk_up3.png");
@@ -113,7 +132,8 @@ public class Game extends JPanel {
 
             g.setColor(Color.WHITE);
             g.setFont( new Font("Arial", Font.BOLD, 24));
-            g.drawString(scoreText, 20, 30);
+            g.drawString(scoreText, 20, 60);
+            g.drawString("Level: " + (currentLevel + 1), 20, 30);
     
             if (gameOver) {
                 g.setColor(Color.RED);
@@ -216,7 +236,12 @@ public class Game extends JPanel {
                 treasure.openChest();
                 soundManager.playClip("treasure", false);
                 //System.out.println("Reached Treasure Chest!");
-                levelComplete = true;
+                if(currentLevel < levels.size() - 1) {
+                    currentLevel++;
+                    startLevel(currentLevel);
+                } else {
+                    levelComplete = true;
+                }
             }
         }
 
@@ -247,13 +272,7 @@ public class Game extends JPanel {
     }
 
     public void resetGame() {
-        player = new Player(50, 50);
-        map = new Map();
-        gameOver = false;
-        levelComplete = false;
-        isPaused = false;
-        particleEffects.clear();
-        scoreText = "Remaining Pieces: " + getTotalPuzzlePieces();
+        startLevel(currentLevel);
         soundManager.stopClip("game_over");
         soundManager.stopClip("trap_warning");
         soundManager.stopClip("puzzle_piece");

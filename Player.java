@@ -17,6 +17,8 @@ public class Player extends Entity implements KeyListener {
     private ImageIcon collapseGIF;
     private boolean isCollapsed = false;
     private boolean inputEnabled = true;
+    private int screen_width = 800;
+    private int screen_height = 600;
 
     public Player(int x, int y) {
         super(x, y, 64, 64);
@@ -93,6 +95,7 @@ public class Player extends Entity implements KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
+        if(!inputEnabled) System.out.println("Input disabled");
         if(!inputEnabled || isCollapsed) return;
         int key = e.getKeyCode();
         if(!isMoving) {
@@ -103,18 +106,22 @@ public class Player extends Entity implements KeyListener {
             }
         }
         if (key == KeyEvent.VK_UP) {
+            if(y - speed <= 0) return;
              y -= speed;
              direction = "up";
         }
         if (key == KeyEvent.VK_DOWN) {
+            if(y + speed >= 536) return;
              y += speed;
              direction = "down";
         }
         if (key == KeyEvent.VK_LEFT) {
+            if(x - speed <= 0) return;
              x -= speed;
              direction = "left";
         }
         if (key == KeyEvent.VK_RIGHT) {
+            if(x + speed >= 736) return;
             x += speed;
             direction = "right";
         }
