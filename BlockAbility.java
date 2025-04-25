@@ -19,7 +19,7 @@ public class BlockAbility extends Ability{
             blockTimer = blockDuration;
             isAvailable = false;
             cooldown = maxCooldown;
-           // SoundManager.getInstance().playClip("block", false);
+            SoundManager.getInstance().playClip("block", false);
        }
     }
 

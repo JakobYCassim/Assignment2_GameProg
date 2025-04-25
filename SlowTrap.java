@@ -39,6 +39,7 @@ public class SlowTrap extends Entity{
 
     public void activate() {
         activated = true;
+        SoundManager.getInstance().playClip("slow_trap", false);
         duration = 150;
     }
 

@@ -30,6 +30,27 @@ public class SoundManager {				// a Singleton class
 		clip = loadClip("sounds/game_over.wav");
 		clips.put("game_over", clip);
 
+		clip = loadClip("sounds/player_attack.wav");
+		clips.put("player_attack", clip);
+
+		clip = loadClip("sounds/enemy_attack.wav");
+		clips.put("enemy_attack", clip);
+
+		clip = loadClip("sounds/hit.wav");
+		clips.put("hit", clip);
+
+		clip = loadClip("sounds/heal.wav");
+		clips.put("heal", clip);
+
+		clip = loadClip("sounds/slow_trap.wav");
+		clips.put("slow_trap", clip);
+
+		clip = loadClip("sounds/take-damage.wav");
+		clips.put("take_damage", clip);
+
+		clip = loadClip("sounds/block.wav");
+		clips.put("block", clip);
+
 	}
 
 

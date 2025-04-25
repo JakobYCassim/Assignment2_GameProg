@@ -110,12 +110,18 @@ public class Game extends JPanel {
             ImageManager.loadImage("block1", "resources/block/block1.png");
             ImageManager.loadImage("block2", "resources/block/block2.png");
             
+            ImageManager.loadImage("heal1", "resources/heal/heal1.png");
+            ImageManager.loadImage("heal2", "resources/heal/heal2.png");
+            ImageManager.loadImage("heal3", "resources/heal/heal3.png");
+
+            
             ImageManager.loadImage("attack1", "resources/attack/attack1.png");
             ImageManager.loadImage("attack2", "resources/attack/attack2.png");
             ImageManager.loadImage("attack3", "resources/attack/attack3.png");
             ImageManager.loadImage("attack4", "resources/attack/attack4.png");
             ImageManager.loadImage("attack5", "resources/attack/attack5.png");
             ImageManager.loadImage("attack6", "resources/attack/attack6.png");
+
 
 
             ImageManager.loadGIF("collapse", "resources/hurt.gif");

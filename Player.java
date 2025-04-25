@@ -39,11 +39,10 @@ public class Player extends Entity implements KeyListener {
     private BlockAbility blockAbility;
     private HealAbility healAbility;
     private Animation blockAnimation;
-    //private Animation healAnimation;
+    private Animation healAnimation;
     private int HEAL_AMOUNT = 25;
     private boolean isHealing = false;
-    private int healAnimationTimer = 0;
-    private static final int HEAL_ANIMATION_DURATION = 30; 
+
 
     public Player(int x, int y) {
         super(x, y, 64, 64);
@@ -55,8 +54,12 @@ public class Player extends Entity implements KeyListener {
         blockAnimation = new Animation(false);
         blockAnimation.addFrame(ImageManager.getImage("block1"), 100);
         blockAnimation.addFrame(ImageManager.getImage("block2"), 100);
-        //healAnimation = new Animation(false);
-
+       
+        healAnimation = new Animation(false);
+        healAnimation.addFrame(ImageManager.getImage("heal1"), 100);
+        healAnimation.addFrame(ImageManager.getImage("heal2"), 100);
+        healAnimation.addFrame(ImageManager.getImage("heal3"), 100);
+        
 
         walkUpAnimation = new Animation(true);
         walkUpAnimation.addFrame(ImageManager.getImage("walk_up1"), 100);
@@ -130,6 +133,7 @@ public class Player extends Entity implements KeyListener {
         //System.out.println(isBlocking);
         if(!isBlocking) {
             health -= damage;
+            soundManager.playClip("take_damage", false);
         }
      
         if(health <= 0) {
@@ -145,15 +149,16 @@ public class Player extends Entity implements KeyListener {
         attacking = true;
         lastAttackTime = currentTime;
 
-        // Play the attack animation
+        
 
         
 
          for (Enemy enemy : enemies) {
             double distance = calculateDistance(x, y, enemy.getX(), enemy.getY());
             if (distance <= attackRange) {
+                soundManager.playClip("player_attack", false);
                 enemy.takeDamage(attackDamage);
-                //add hit effect/sound
+            
             } 
         }
     } 
@@ -177,12 +182,7 @@ public class Player extends Entity implements KeyListener {
         blockAbility.update();
         healAbility.update();
 
-        if(isHealing) {
-            healAnimationTimer --;
-            if(healAnimationTimer <= 0) {
-                isHealing = false;
-            }
-        }
+    
     }
 
     @Override
@@ -250,7 +250,11 @@ public class Player extends Entity implements KeyListener {
             currentAnimation.update();
             g.drawImage(currentAnimation.getImage(), x, y, null);
         }else if(isHealing) {   
-            g.drawImage(ImageManager.getImage("heal"), x, y, null);
+            Animation currentAnimation = healAnimation;
+            if(!currentAnimation.isStillActive()) currentAnimation.start();
+            currentAnimation.update();
+            if(!currentAnimation.isStillActive()) isHealing = false;
+            g.drawImage(currentAnimation.getImage(), x, y, null);
         }else if(isBlocking) {  
             Animation currentAnimation = blockAnimation;
             if(!currentAnimation.isStillActive()) currentAnimation.start();
@@ -296,9 +300,16 @@ public class Player extends Entity implements KeyListener {
         return isBlocking;
     }
 
+    public boolean isHealing() {
+        return isHealing;
+    }
+
+
     public void heal() {
+        if(health >= maxHealth) return;
+
         isHealing = true;
-        healAnimationTimer = HEAL_ANIMATION_DURATION;
+        healAbility.useCharge();
         if(health + HEAL_AMOUNT > maxHealth) {
             health = maxHealth;
         } else {
