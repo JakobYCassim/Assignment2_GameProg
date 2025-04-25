@@ -35,7 +35,7 @@ public class Trap extends Entity {
     public void draw(Graphics g) {
         if (trapImage != null && visible) {
             g.drawImage(trapImage, x, y, null);
-            System.out.println("Drawing trap at (" + x + ", " + y + ")");
+           // System.out.println("Drawing trap at (" + x + ", " + y + ")");
         }
 
         if (trapImage == null) {

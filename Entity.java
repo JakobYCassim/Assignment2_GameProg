@@ -16,7 +16,7 @@ public abstract class Entity {
     }
 
     public abstract void draw(Graphics g);
-
+    public void update() {}
     public Rectangle getBounds() {
         return new Rectangle(x, y, width, height);
     }

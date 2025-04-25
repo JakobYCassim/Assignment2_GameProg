@@ -1,8 +1,9 @@
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.ImageIcon;
-
 
 public class Player extends Entity implements KeyListener {
     private int speed = 5;
@@ -14,11 +15,23 @@ public class Player extends Entity implements KeyListener {
     private Animation walkLeftAnimation;
     private Animation walkRightAnimation;
     private Animation idleAnimation;
+    private Animation attackAnimation; //new
     private ImageIcon collapseGIF;
     private boolean isCollapsed = false;
     private boolean inputEnabled = true;
     private int screen_width = 800;
     private int screen_height = 600;
+
+    private int health = 100;
+    private int maxHealth = 100;
+    private int attackDamage = 25;
+    private int attackRange = 50;
+    private boolean attacking = false;  
+    private float speedModifier = 1.0f;
+    private long lastAttackTime = 0;
+    private static final long ATTACK_COOLDOWN = 800;
+
+    private List<Enemy> enemiesAlive = new ArrayList<>();
 
     public Player(int x, int y) {
         super(x, y, 64, 64);
@@ -80,7 +93,9 @@ public class Player extends Entity implements KeyListener {
 
         collapseGIF = ImageManager.getGIF("collapse");
     
-    
+        attackAnimation = new Animation(false);
+        attackAnimation.addFrame(ImageManager.getImage("idle7"), 100);
+        attackAnimation.addFrame(ImageManager.getImage("idle4"), 100);
     
     
     
@@ -89,8 +104,51 @@ public class Player extends Entity implements KeyListener {
     
     }
 
-    public void update() {
-        //
+    public void takeDamage(int damage) {
+        health -= damage;
+        if(health <= 0) {
+            health = 0;
+            collapse();
+        }
+    }
+
+    public void attack(List<Enemy> enemies) {
+        long currentTime = System.currentTimeMillis();
+        if (currentTime - lastAttackTime < ATTACK_COOLDOWN) return;
+        
+        attacking = true;
+        lastAttackTime = currentTime;
+
+        // Play the attack animation
+        Animation currentAnimation = attackAnimation;
+        attackAnimation.start();
+        
+
+         for (Enemy enemy : enemies) {
+            double distance = calculateDistance(x, y, enemy.getX(), enemy.getY());
+            if (distance <= attackRange) {
+                enemy.takeDamage(attackDamage);
+                //add hit effect/sound
+            } 
+        }
+    } 
+
+    private double calculateDistance(int x, int y, int x2, int y2) {
+        // Calculate the distance between two points
+        return Math.sqrt(Math.pow(x2 - x, 2) + Math.pow(y2 - y, 2));
+    }
+
+    public void setSpeedModifier(float speedModifier) {
+        this.speedModifier = speedModifier;
+    }
+
+    public void resetSpeedModifier() {
+        this.speedModifier = 1.0f;
+    }
+
+    public void update(List<Enemy> enemies) {   
+        //update enemies list
+        this.enemiesAlive = enemies;
     }
 
     @Override
@@ -105,29 +163,35 @@ public class Player extends Entity implements KeyListener {
                 soundManager.playClip("walking", true);
             }
         }
+
+        int effectiveSpeed = (int) (speed * speedModifier);
         if (key == KeyEvent.VK_UP) {
-            if(y - speed <= 0) return;
-             y -= speed;
+            if(y - effectiveSpeed <= 0) return;
+             y -= effectiveSpeed;
              direction = "up";
         }
         if (key == KeyEvent.VK_DOWN) {
-            if(y + speed >= 536) return;
-             y += speed;
+            if(y + effectiveSpeed >= 536) return;
+             y += effectiveSpeed;
              direction = "down";
         }
         if (key == KeyEvent.VK_LEFT) {
-            if(x - speed <= 0) return;
-             x -= speed;
+            if(x - effectiveSpeed <= 0) return;
+             x -= effectiveSpeed;
              direction = "left";
         }
         if (key == KeyEvent.VK_RIGHT) {
-            if(x + speed >= 736) return;
+            if(x + effectiveSpeed >= 736) return;
             x += speed;
             direction = "right";
         }
 
         if (key == KeyEvent.VK_F) {
             collapse();
+        }
+
+        if (key == KeyEvent.VK_SPACE) {
+            attack(enemiesAlive);
         }
 
 
@@ -149,6 +213,11 @@ public class Player extends Entity implements KeyListener {
             currentAnimation.update();
             g.drawImage(currentAnimation.getImage(), x, y, null);
         }
+
+        g.setColor(Color.RED);
+        g.fillRect(x, y -10, width, 5);
+        g.setColor(Color.GREEN);
+        g.fillRect(x, y - 10, (int) (width * (health / (float) maxHealth)), 5);
     }
 
     private Animation getAnimationForDirection(String direction) {

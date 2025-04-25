@@ -154,10 +154,18 @@ public class Game extends JPanel {
     
         public void update() {
             if(!gameOver && !levelComplete) {    
-                //player.update();
+                player.update(map.getEnemies());
                 //System.out.println("Player Bounds: " + player.getBounds());
                 for(Entity trap : map.getTraps()) {
                    ( (Trap) trap).update(); 
+                }
+
+                for(Enemy enemy : map.getEnemies()) {
+                    enemy.update(player);
+                }
+
+                for (Entity slowTrap : map.getSlowTraps()) {
+                    ( (SlowTrap) slowTrap).update();
                 }
     
                 if(player.isMoving() && dustCooldown <= 0) {
@@ -215,6 +223,21 @@ public class Game extends JPanel {
                     soundManager.stopClip("trap_warning");
                 }
             }
+
+            boolean playerSlowed = false;
+            for (Entity sTrap : map.getSlowTraps()) {
+                SlowTrap sT = (SlowTrap) sTrap;   
+                if (player.getBounds().intersects(sTrap.getBounds())) {
+                    sT.activate();
+                    playerSlowed = true;
+                    player.setSpeedModifier(sT.getSlowFactor());
+                    break;
+                }
+            }
+
+            if (!playerSlowed) {
+                player.resetSpeedModifier();
+            }
     
             List<Entity> puzzlePieces = map.getPuzzlePieces();
             puzzlePieces.removeIf(piece -> {
@@ -228,7 +251,7 @@ public class Game extends JPanel {
             });
             collectPuzzlePiece();
             
-    
+            
     
     
             if(puzzlePieces.isEmpty() && player.getBounds().intersects(map.getTreasure().getBounds())) {

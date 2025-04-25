@@ -24,8 +24,8 @@ public class Animation {
     public Animation(boolean loop) {
         frames = new ArrayList<AnimFrame>();
         totalDuration = 0;
-	this.loop = loop;
-	isActive = false;
+	    this.loop = loop;
+	    isActive = false;
     }
 
 
@@ -44,10 +44,10 @@ public class Animation {
         Starts this animation over from the beginning.
     */
     public synchronized void start() {
-	isActive = true;
+	    isActive = true;
         animTime = 0;						// reset time animation has run for to zero
         currFrameIndex = 0;					// reset current frame to first frame
-	startTime = System.currentTimeMillis();			// reset start time to current time
+	    startTime = System.currentTimeMillis();			// reset start time to current time
     }
 
 
@@ -55,7 +55,7 @@ public class Animation {
         Terminates this animation.
     */
     public synchronized void stop() {
-	isActive = false;
+	    isActive = false;
     }
 
 
@@ -65,27 +65,27 @@ public class Animation {
     */
     public synchronized void update() {
 
-	if (!isActive)
-	    return;
+	    if (!isActive)
+	        return;
 
         long currTime = System.currentTimeMillis();		// find the current time
-	long elapsedTime = currTime - startTime;		// find how much time has elapsed since last update
-	startTime = currTime;					// set start time to current time
+	    long elapsedTime = currTime - startTime;		// find how much time has elapsed since last update
+	    startTime = currTime;					// set start time to current time
 
         if (frames.size() > 1) {
             animTime += elapsedTime;				// add elapsed time to amount of time animation has run for
-            if (animTime >= totalDuration) {			// if the time animation has run for > total duration
-		if (loop) {
-                    animTime = animTime % totalDuration;	// reset time animation has run for
-                    currFrameIndex = 0;				// reset current frame to first frame
-		}
-		else { 
-	            isActive = false;				// set to false to terminate animation
-		}
-            }
+        if (animTime >= totalDuration) {			// if the time animation has run for > total duration
+		    if (loop) {
+                animTime = animTime % totalDuration;	// reset time animation has run for
+                currFrameIndex = 0;				// reset current frame to first frame
+		    }
+		    else { 
+                isActive = false;				// set to false to terminate animation
+		    }
+        }
 
-	    if (!isActive)
-	       return;
+	        if (!isActive)
+	            return;
 
             while (animTime > getFrame(currFrameIndex).endTime) {
                 currFrameIndex++;				// set frame corresponding to time animation has run for

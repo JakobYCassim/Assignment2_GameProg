@@ -5,6 +5,8 @@ import java.util.Random;
 public class Map {
     private List<Entity> traps;
     private List<Entity> puzzlePieces;
+    private List<Enemy> enemies;
+    private List<Entity> slowTraps;
     private TreasureChest treasure;
     private Image backgroundImage;
     private Random rand;
@@ -18,7 +20,7 @@ public class Map {
         this.player = player;
         puzzlePieces = new ArrayList<>();
         rand = new Random();
-
+        //Load Traps
         for(int i=0; i < numTraps; i++) {
             
             int x,y;
@@ -32,6 +34,34 @@ public class Map {
                 traps.add(new Trap(x, y, "trap_1"));
             }
         }
+        //Load Slow Traps
+        slowTraps = new ArrayList<>();  
+        for(int i=0; i < numTraps; i++) {
+            
+            int x,y;
+            do {
+                x = rand.nextInt(660) + 100;
+                y = rand.nextInt(460) + 50;
+            } while(isOverlapping(x, y, slowTraps));
+            slowTraps.add(new SlowTrap(x, y, "trap_2"));
+        }
+
+        //Load Enemies
+        enemies = new ArrayList<>();
+        for(int i=0; i < numTraps; i++) {
+            
+            int x,y;
+            do {
+                x = rand.nextInt(660) + 100;
+                y = rand.nextInt(460) + 50;
+            } while(isEnemyOverlapping(x, y, enemies));
+            if(i % 2 == 0) {
+                enemies.add(new Enemy(x, y, true));
+            }else {
+                enemies.add(new Enemy(x, y, false));
+            }
+        }
+
         for(int i=0; i < numPuzzlePieces; i++) {
             int x,y;
             do {
@@ -49,6 +79,26 @@ public class Map {
         treasure = new TreasureChest(700, 500, "treasure", "open_chest");
 
     }
+
+    private boolean isEnemyOverlapping(int x, int y, List<Enemy> enemyList) {
+        Rectangle newEnemyBounds = new Rectangle(x, y, PLAYER_WIDTH, PLAYER_HEIGHT);
+        for(Enemy e: enemyList) {
+            Rectangle enemyBounds = e.getBounds();
+            if(newEnemyBounds.intersects(enemyBounds)) {
+                return true;
+            }
+        }
+
+        if (player != null) {
+            Rectangle playerBounds = player.getBounds();
+            if(newEnemyBounds.intersects(playerBounds)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+        
 
     private boolean isOverlapping(int x, int y, List<Entity> entities) {
         Rectangle newEntityBounds = new Rectangle(x, y, PLAYER_WIDTH, PLAYER_HEIGHT);
@@ -85,6 +135,14 @@ public class Map {
             piece.draw(g);
         }
 
+        for(Entity trap: slowTraps) {
+            trap.draw(g);
+        }
+
+        for (Enemy enemy: enemies) {            
+            enemy.draw(g);
+        }
+
         if(puzzlePieces.isEmpty()) {
             treasure.draw(g);
         }
@@ -94,6 +152,14 @@ public class Map {
         return traps;
     }
 
+    public List<Entity> getSlowTraps() {
+        return slowTraps;
+    }
+
+     public List<Enemy> getEnemies() {    
+        return enemies;
+    }
+    
     public List<Entity> getPuzzlePieces() {
         return puzzlePieces;
     }
