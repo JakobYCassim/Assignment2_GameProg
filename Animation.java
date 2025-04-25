@@ -120,7 +120,7 @@ public class Animation {
 
 
     public boolean isStillActive () {
-	return isActive;
+	    return isActive;
     }
 
 

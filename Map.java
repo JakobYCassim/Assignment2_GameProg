@@ -43,7 +43,7 @@ public class Map {
                 x = rand.nextInt(660) + 100;
                 y = rand.nextInt(460) + 50;
             } while(isOverlapping(x, y, slowTraps));
-            slowTraps.add(new SlowTrap(x, y, "trap_2"));
+            slowTraps.add(new SlowTrap(x, y, "slow_trap"));
         }
 
         //Load Enemies

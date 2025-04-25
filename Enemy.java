@@ -58,7 +58,7 @@ public class Enemy extends Entity{
                 isAttacking = false;
                 walkAnimation.start();
             }
-            System.out.println("Attack animation is still active: " + attackAnimation.isStillActive());
+            //System.out.println("Attack animation is still active: " + attackAnimation.isStillActive());
             return;
 
     

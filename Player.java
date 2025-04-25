@@ -31,12 +31,33 @@ public class Player extends Entity implements KeyListener {
     private long lastAttackTime = 0;
     private static final long ATTACK_COOLDOWN = 800;
 
+
     private List<Enemy> enemiesAlive = new ArrayList<>();
+
+
+    private boolean isBlocking = false;
+    private BlockAbility blockAbility;
+    private HealAbility healAbility;
+    private Animation blockAnimation;
+    //private Animation healAnimation;
+    private int HEAL_AMOUNT = 25;
+    private boolean isHealing = false;
+    private int healAnimationTimer = 0;
+    private static final int HEAL_ANIMATION_DURATION = 30; 
 
     public Player(int x, int y) {
         super(x, y, 64, 64);
         soundManager = SoundManager.getInstance();
-    
+        blockAbility = new BlockAbility(this);
+        healAbility = new HealAbility(this);
+        
+        
+        blockAnimation = new Animation(false);
+        blockAnimation.addFrame(ImageManager.getImage("block1"), 100);
+        blockAnimation.addFrame(ImageManager.getImage("block2"), 100);
+        //healAnimation = new Animation(false);
+
+
         walkUpAnimation = new Animation(true);
         walkUpAnimation.addFrame(ImageManager.getImage("walk_up1"), 100);
         walkUpAnimation.addFrame(ImageManager.getImage("walk_up2"), 100);
@@ -84,20 +105,20 @@ public class Player extends Entity implements KeyListener {
         idleAnimation = new Animation(true);
         idleAnimation.addFrame(ImageManager.getImage("idle0"), 100);
         idleAnimation.addFrame(ImageManager.getImage("idle1"), 100);
-        idleAnimation.addFrame(ImageManager.getImage("idle2"), 100);
-        idleAnimation.addFrame(ImageManager.getImage("idle3"), 100);
-        idleAnimation.addFrame(ImageManager.getImage("idle4"), 100);
-        idleAnimation.addFrame(ImageManager.getImage("idle5"), 100);
-        idleAnimation.addFrame(ImageManager.getImage("idle6"), 100);
-        idleAnimation.addFrame(ImageManager.getImage("idle7"), 100);
+
 
         collapseGIF = ImageManager.getGIF("collapse");
     
         attackAnimation = new Animation(false);
-        attackAnimation.addFrame(ImageManager.getImage("idle7"), 100);
-        attackAnimation.addFrame(ImageManager.getImage("idle4"), 100);
+        attackAnimation.addFrame(ImageManager.getImage("attack1"), 100);
+        attackAnimation.addFrame(ImageManager.getImage("attack2"), 100);
+        attackAnimation.addFrame(ImageManager.getImage("attack3"), 100);
+        attackAnimation.addFrame(ImageManager.getImage("attack4"), 100);
+        attackAnimation.addFrame(ImageManager.getImage("attack5"), 100);
+        attackAnimation.addFrame(ImageManager.getImage("attack6"), 100);
     
-    
+        
+
     
     
     
@@ -105,7 +126,12 @@ public class Player extends Entity implements KeyListener {
     }
 
     public void takeDamage(int damage) {
-        health -= damage;
+
+        //System.out.println(isBlocking);
+        if(!isBlocking) {
+            health -= damage;
+        }
+     
         if(health <= 0) {
             health = 0;
             collapse();
@@ -120,8 +146,7 @@ public class Player extends Entity implements KeyListener {
         lastAttackTime = currentTime;
 
         // Play the attack animation
-        Animation currentAnimation = attackAnimation;
-        attackAnimation.start();
+
         
 
          for (Enemy enemy : enemies) {
@@ -149,6 +174,15 @@ public class Player extends Entity implements KeyListener {
     public void update(List<Enemy> enemies) {   
         //update enemies list
         this.enemiesAlive = enemies;
+        blockAbility.update();
+        healAbility.update();
+
+        if(isHealing) {
+            healAnimationTimer --;
+            if(healAnimationTimer <= 0) {
+                isHealing = false;
+            }
+        }
     }
 
     @Override
@@ -194,6 +228,14 @@ public class Player extends Entity implements KeyListener {
             attack(enemiesAlive);
         }
 
+        if (key == KeyEvent.VK_B) {
+            blockAbility.activate();
+        }
+
+        if (key == KeyEvent.VK_H) {
+            healAbility.activate();
+        }
+
 
         //System.out.println("Player Position x: " + x + ", y: " + y);
     }
@@ -207,7 +249,20 @@ public class Player extends Entity implements KeyListener {
             if (!currentAnimation.isStillActive()) currentAnimation.start();
             currentAnimation.update();
             g.drawImage(currentAnimation.getImage(), x, y, null);
-        } else {
+        }else if(isHealing) {   
+            g.drawImage(ImageManager.getImage("heal"), x, y, null);
+        }else if(isBlocking) {  
+            Animation currentAnimation = blockAnimation;
+            if(!currentAnimation.isStillActive()) currentAnimation.start();
+            currentAnimation.update();
+            g.drawImage(currentAnimation.getImage(), x, y, null);
+        }else if(attacking) {
+            Animation currentAnimation = attackAnimation;
+            if(!currentAnimation.isStillActive()) currentAnimation.start();
+            currentAnimation.update();
+            if(!currentAnimation.isStillActive()) attacking = false;
+            g.drawImage(currentAnimation.getImage(), x, y, null);
+        }else {
             Animation currentAnimation = idleAnimation;
             if(!currentAnimation.isStillActive()) currentAnimation.start();
             currentAnimation.update();
@@ -228,6 +283,39 @@ public class Player extends Entity implements KeyListener {
             case "right" -> walkRightAnimation;
             default -> idleAnimation;
         };
+    }
+
+    public void setBlocking(boolean blocking) {
+        this.isBlocking = blocking;
+        if(blocking) {
+            blockAnimation.start();
+        }
+    }
+
+    public boolean isBlocking() {
+        return isBlocking;
+    }
+
+    public void heal() {
+        isHealing = true;
+        healAnimationTimer = HEAL_ANIMATION_DURATION;
+        if(health + HEAL_AMOUNT > maxHealth) {
+            health = maxHealth;
+        } else {
+            health += HEAL_AMOUNT;
+        }
+    }
+
+    public BlockAbility getBlockAbility() {
+        return blockAbility;
+    }
+
+    public HealAbility getHealAbility() {
+        return healAbility;
+    }
+
+    public void collectPuzzlePiece() {
+        healAbility.addCharge();
     }
 
     public void collapse() {

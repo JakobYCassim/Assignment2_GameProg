@@ -16,6 +16,7 @@ public class Game extends JPanel {
     private String scoreText;
     private List<Level> levels;
     private int currentLevel;
+    private AbilityUI abilityUI;
 
 
         public Game() {
@@ -31,7 +32,11 @@ public class Game extends JPanel {
             soundManager = SoundManager.getInstance();
             soundManager.setVolume("background", 0.38f);
             soundManager.playClip("background", true);
-        
+            
+            abilityUI = new AbilityUI(630, 20);
+            abilityUI.addAbility(player.getBlockAbility());
+            abilityUI.addAbility(player.getHealAbility());
+
         }
 
         private void initializeLevels() {
@@ -59,64 +64,133 @@ public class Game extends JPanel {
             ImageManager.loadImage("background", "resources/background.png");
 
 
-            ImageManager.loadImage("walk_up1", "resources/walk_up1.png");
-            ImageManager.loadImage("walk_up2", "resources/walk_up2.png");
-            ImageManager.loadImage("walk_up3", "resources/walk_up3.png");
-            ImageManager.loadImage("walk_up4", "resources/walk_up4.png");
-            ImageManager.loadImage("walk_up5", "resources/walk_up5.png");
-            ImageManager.loadImage("walk_up6", "resources/walk_up6.png");
-            ImageManager.loadImage("walk_up7", "resources/walk_up7.png");
-            ImageManager.loadImage("walk_up8", "resources/walk_up8.png");
-            ImageManager.loadImage("walk_up9", "resources/walk_up9.png");
+            ImageManager.loadImage("walk_up1", "resources/walk/walk_up/walk_up1.png");
+            ImageManager.loadImage("walk_up2", "resources/walk/walk_up/walk_up2.png");
+            ImageManager.loadImage("walk_up3", "resources/walk/walk_up/walk_up3.png");
+            ImageManager.loadImage("walk_up4", "resources/walk/walk_up/walk_up4.png");
+            ImageManager.loadImage("walk_up5", "resources/walk/walk_up/walk_up5.png");
+            ImageManager.loadImage("walk_up6", "resources/walk/walk_up/walk_up6.png");
+            ImageManager.loadImage("walk_up7", "resources/walk/walk_up/walk_up7.png");
+            ImageManager.loadImage("walk_up8", "resources/walk/walk_up/walk_up8.png");
+            ImageManager.loadImage("walk_up9", "resources/walk/walk_up/walk_up9.png");
         
-            ImageManager.loadImage("walk_down1", "resources/walk_down1.png");
-            ImageManager.loadImage("walk_down2", "resources/walk_down2.png");
-            ImageManager.loadImage("walk_down3", "resources/walk_down3.png");
-            ImageManager.loadImage("walk_down4", "resources/walk_down4.png");
-            ImageManager.loadImage("walk_down5", "resources/walk_down5.png");
-            ImageManager.loadImage("walk_down6", "resources/walk_down6.png");
-            ImageManager.loadImage("walk_down7", "resources/walk_down7.png");
-            ImageManager.loadImage("walk_down8", "resources/walk_down8.png");
-            ImageManager.loadImage("walk_down9", "resources/walk_down9.png");
+            ImageManager.loadImage("walk_down1", "resources/walk/walk_down/walk_down1.png");
+            ImageManager.loadImage("walk_down2", "resources/walk/walk_down/walk_down2.png");
+            ImageManager.loadImage("walk_down3", "resources/walk/walk_down/walk_down3.png");
+            ImageManager.loadImage("walk_down4", "resources/walk/walk_down/walk_down4.png");
+            ImageManager.loadImage("walk_down5", "resources/walk/walk_down/walk_down5.png");
+            ImageManager.loadImage("walk_down6", "resources/walk/walk_down/walk_down6.png");
+            ImageManager.loadImage("walk_down7", "resources/walk/walk_down/walk_down7.png");
+            ImageManager.loadImage("walk_down8", "resources/walk/walk_down/walk_down8.png");
+            ImageManager.loadImage("walk_down9", "resources/walk/walk_down/walk_down9.png");
         
-            ImageManager.loadImage("walk_left1", "resources/walk_left1.png");
-            ImageManager.loadImage("walk_left2", "resources/walk_left2.png");
-            ImageManager.loadImage("walk_left3", "resources/walk_left3.png");
-            ImageManager.loadImage("walk_left4", "resources/walk_left4.png");
-            ImageManager.loadImage("walk_left5", "resources/walk_left5.png");
-            ImageManager.loadImage("walk_left6", "resources/walk_left6.png");
-            ImageManager.loadImage("walk_left7", "resources/walk_left7.png");
-            ImageManager.loadImage("walk_left8", "resources/walk_left8.png");
-            ImageManager.loadImage("walk_left9", "resources/walk_left9.png");
+            ImageManager.loadImage("walk_left1", "resources/walk/walk_left/walk_left1.png");
+            ImageManager.loadImage("walk_left2", "resources/walk/walk_left/walk_left2.png");
+            ImageManager.loadImage("walk_left3", "resources/walk/walk_left/walk_left3.png");
+            ImageManager.loadImage("walk_left4", "resources/walk/walk_left/walk_left4.png");
+            ImageManager.loadImage("walk_left5", "resources/walk/walk_left/walk_left5.png");
+            ImageManager.loadImage("walk_left6", "resources/walk/walk_left/walk_left6.png");
+            ImageManager.loadImage("walk_left7", "resources/walk/walk_left/walk_left7.png");
+            ImageManager.loadImage("walk_left8", "resources/walk/walk_left/walk_left8.png");
+            ImageManager.loadImage("walk_left9", "resources/walk/walk_left/walk_left9.png");
         
-            ImageManager.loadImage("walk_right1", "resources/walk_right1.png");
-            ImageManager.loadImage("walk_right2", "resources/walk_right2.png");
-            ImageManager.loadImage("walk_right3", "resources/walk_right3.png");
-            ImageManager.loadImage("walk_right4", "resources/walk_right4.png");
-            ImageManager.loadImage("walk_right5", "resources/walk_right5.png");
-            ImageManager.loadImage("walk_right6", "resources/walk_right6.png");
-            ImageManager.loadImage("walk_right7", "resources/walk_right7.png");
-            ImageManager.loadImage("walk_right8", "resources/walk_right8.png");
-            ImageManager.loadImage("walk_right9", "resources/walk_right9.png");
+            ImageManager.loadImage("walk_right1", "resources/walk/walk_right/walk_right1.png");
+            ImageManager.loadImage("walk_right2", "resources/walk/walk_right/walk_right2.png");
+            ImageManager.loadImage("walk_right3", "resources/walk/walk_right/walk_right3.png");
+            ImageManager.loadImage("walk_right4", "resources/walk/walk_right/walk_right4.png");
+            ImageManager.loadImage("walk_right5", "resources/walk/walk_right/walk_right5.png");
+            ImageManager.loadImage("walk_right6", "resources/walk/walk_right/walk_right6.png");
+            ImageManager.loadImage("walk_right7", "resources/walk/walk_right/walk_right7.png");
+            ImageManager.loadImage("walk_right8", "resources/walk/walk_right/walk_right8.png");
+            ImageManager.loadImage("walk_right9", "resources/walk/walk_right/walk_right9.png");
         
-            ImageManager.loadImage("idle0", "resources/idle0.png");
-            ImageManager.loadImage("idle1", "resources/idle1.png");
-            ImageManager.loadImage("idle2", "resources/idle2.png");
-            ImageManager.loadImage("idle3", "resources/idle3.png");
-            ImageManager.loadImage("idle4", "resources/idle4.png");
-            ImageManager.loadImage("idle5", "resources/idle5.png");
-            ImageManager.loadImage("idle6", "resources/idle6.png");
-            ImageManager.loadImage("idle7", "resources/idle7.png");
+            ImageManager.loadImage("idle0", "resources/idle/idle1.png");
+            ImageManager.loadImage("idle1", "resources/idle/idle2.png");
+  
+            ImageManager.loadImage("block1", "resources/block/block1.png");
+            ImageManager.loadImage("block2", "resources/block/block2.png");
             
+            ImageManager.loadImage("attack1", "resources/attack/attack1.png");
+            ImageManager.loadImage("attack2", "resources/attack/attack2.png");
+            ImageManager.loadImage("attack3", "resources/attack/attack3.png");
+            ImageManager.loadImage("attack4", "resources/attack/attack4.png");
+            ImageManager.loadImage("attack5", "resources/attack/attack5.png");
+            ImageManager.loadImage("attack6", "resources/attack/attack6.png");
+
+
             ImageManager.loadGIF("collapse", "resources/hurt.gif");
         
             ImageManager.loadImage("trap_1", "resources/traps1.png");
             ImageManager.loadImage("trap_2", "resources/traps2.png");
+            ImageManager.loadImage("slow_trap", "resources/slowTrap.png");
             
             ImageManager.loadImage("treasure", "resources/treasure_chest.png");
             ImageManager.loadGIF("open_chest", "resources/chest.gif");
             
             ImageManager.loadGIF("puzzle_piece", "resources/puzzlePiece.gif");
+
+            ImageManager.loadImage("enemy_walk_left1", "resources/enemy_walk/enemy_walk_left/enemy_walk_left1.png");
+            ImageManager.loadImage("enemy_walk_left2", "resources/enemy_walk/enemy_walk_left/enemy_walk_left2.png");
+            ImageManager.loadImage("enemy_walk_left3", "resources/enemy_walk/enemy_walk_left/enemy_walk_left3.png");
+            ImageManager.loadImage("enemy_walk_left4", "resources/enemy_walk/enemy_walk_left/enemy_walk_left4.png");
+            ImageManager.loadImage("enemy_walk_left5", "resources/enemy_walk/enemy_walk_left/enemy_walk_left5.png");
+            ImageManager.loadImage("enemy_walk_left6", "resources/enemy_walk/enemy_walk_left/enemy_walk_left6.png");
+            ImageManager.loadImage("enemy_walk_left7", "resources/enemy_walk/enemy_walk_left/enemy_walk_left7.png");
+            ImageManager.loadImage("enemy_walk_left8", "resources/enemy_walk/enemy_walk_left/enemy_walk_left8.png");
+            ImageManager.loadImage("enemy_walk_left9", "resources/enemy_walk/enemy_walk_left/enemy_walk_left9.png");
+
+            ImageManager.loadImage("enemy_walk_right1", "resources/enemy_walk/enemy_walk_right/enemy_walk_right1.png");
+            ImageManager.loadImage("enemy_walk_right2", "resources/enemy_walk/enemy_walk_right/enemy_walk_right2.png");
+            ImageManager.loadImage("enemy_walk_right3", "resources/enemy_walk/enemy_walk_right/enemy_walk_right3.png");
+            ImageManager.loadImage("enemy_walk_right4", "resources/enemy_walk/enemy_walk_right/enemy_walk_right4.png");
+            ImageManager.loadImage("enemy_walk_right5", "resources/enemy_walk/enemy_walk_right/enemy_walk_right5.png"); 
+            ImageManager.loadImage("enemy_walk_right6", "resources/enemy_walk/enemy_walk_right/enemy_walk_right6.png");
+            ImageManager.loadImage("enemy_walk_right7", "resources/enemy_walk/enemy_walk_right/enemy_walk_right7.png");
+            ImageManager.loadImage("enemy_walk_right8", "resources/enemy_walk/enemy_walk_right/enemy_walk_right8.png");
+            ImageManager.loadImage("enemy_walk_right9", "resources/enemy_walk/enemy_walk_right/enemy_walk_right9.png");
+
+            ImageManager.loadImage("enemy_walk_down1", "resources/enemy_walk/enemy_walk_down/enemy_walk_down1.png");
+            ImageManager.loadImage("enemy_walk_down2", "resources/enemy_walk/enemy_walk_down/enemy_walk_down2.png");
+            ImageManager.loadImage("enemy_walk_down3", "resources/enemy_walk/enemy_walk_down/enemy_walk_down3.png");
+            ImageManager.loadImage("enemy_walk_down4", "resources/enemy_walk/enemy_walk_down/enemy_walk_down4.png");
+            ImageManager.loadImage("enemy_walk_down5", "resources/enemy_walk/enemy_walk_down/enemy_walk_down5.png");
+            ImageManager.loadImage("enemy_walk_down6", "resources/enemy_walk/enemy_walk_down/enemy_walk_down6.png");
+            ImageManager.loadImage("enemy_walk_down7", "resources/enemy_walk/enemy_walk_down/enemy_walk_down7.png");
+            ImageManager.loadImage("enemy_walk_down8", "resources/enemy_walk/enemy_walk_down/enemy_walk_down8.png");
+            ImageManager.loadImage("enemy_walk_down9", "resources/enemy_walk/enemy_walk_down/enemy_walk_down9.png");
+
+            ImageManager.loadImage("enemy_walk_up1", "resources/enemy_walk/enemy_walk_up/enemy_walk_up1.png");
+            ImageManager.loadImage("enemy_walk_up2", "resources/enemy_walk/enemy_walk_up/enemy_walk_up2.png");
+            ImageManager.loadImage("enemy_walk_up3", "resources/enemy_walk/enemy_walk_up/enemy_walk_up3.png");
+            ImageManager.loadImage("enemy_walk_up4", "resources/enemy_walk/enemy_walk_up/enemy_walk_up4.png");
+            ImageManager.loadImage("enemy_walk_up5", "resources/enemy_walk/enemy_walk_up/enemy_walk_up5.png");
+            ImageManager.loadImage("enemy_walk_up6", "resources/enemy_walk/enemy_walk_up/enemy_walk_up6.png");
+            ImageManager.loadImage("enemy_walk_up7", "resources/enemy_walk/enemy_walk_up/enemy_walk_up7.png");
+            ImageManager.loadImage("enemy_walk_up8", "resources/enemy_walk/enemy_walk_up/enemy_walk_up8.png");
+            ImageManager.loadImage("enemy_walk_up9", "resources/enemy_walk/enemy_walk_up/enemy_walk_up9.png");
+
+            ImageManager.loadImage("enemy_attack1", "resources/enemy_attack/enemy_attack1.png");
+            ImageManager.loadImage("enemy_attack2", "resources/enemy_attack/enemy_attack2.png");
+            ImageManager.loadImage("enemy_attack3", "resources/enemy_attack/enemy_attack3.png");
+            ImageManager.loadImage("enemy_attack4", "resources/enemy_attack/enemy_attack4.png");
+            ImageManager.loadImage("enemy_attack5", "resources/enemy_attack/enemy_attack5.png");
+            ImageManager.loadImage("enemy_attack6", "resources/enemy_attack/enemy_attack6.png");
+            ImageManager.loadImage("enemy_attack7", "resources/enemy_attack/enemy_attack7.png");
+            
+            ImageManager.loadImage("enemy_death1", "resources/enemy_death/death1.png");
+            ImageManager.loadImage("enemy_death2", "resources/enemy_death/death2.png");
+            ImageManager.loadImage("enemy_death3", "resources/enemy_death/death3.png");
+            ImageManager.loadImage("enemy_death4", "resources/enemy_death/death4.png");
+            ImageManager.loadImage("enemy_death5", "resources/enemy_death/death5.png");
+            ImageManager.loadImage("enemy_death6", "resources/enemy_death/death6.png");
+
+             
+            ImageManager.loadImage("block_icon", "resources/block_icon.png");
+            ImageManager.loadImage("heal_icon", "resources/heal_icon.png");
+
+            
+
+
         }
     
         @Override
@@ -134,7 +208,9 @@ public class Game extends JPanel {
             g.setFont( new Font("Arial", Font.BOLD, 24));
             g.drawString(scoreText, 20, 60);
             g.drawString("Level: " + (currentLevel + 1), 20, 30);
-    
+            
+
+            abilityUI.draw(g);
             if (gameOver) {
                 g.setColor(Color.RED);
                 g.setFont(new Font("Arial", Font.BOLD, 24));
@@ -244,6 +320,7 @@ public class Game extends JPanel {
                 if (player.getBounds().intersects(piece.getBounds())) {
                     particleEffects.add(new SparkleEffect(piece.getX(), piece.getY()));
                     soundManager.playClip("puzzle_piece", false);
+                    player.collectPuzzlePiece();
                     //System.out.println("Collision with puzzle piece!");
                     return true;
                 }
