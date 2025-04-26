@@ -13,9 +13,12 @@ public class SlowTrap extends Entity{
     }
 
     @Override
-    public void draw(Graphics g) {
+    public void draw(Graphics g, int cameraX, int cameraY) {
+        int screenX = x - cameraX;
+        int screenY = y - cameraY;
+        
         if (trapImage != null) {
-            g.drawImage(trapImage, x, y, null);
+            g.drawImage(trapImage, screenX, screenY, null);
         }
 
         if(activated) {

@@ -13,9 +13,19 @@ public class Map {
     private Player player;
     public static final int PLAYER_WIDTH = 80;
     public static final int PLAYER_HEIGHT = 80;
+
+
+    private int worldWidth = 1600;
+    private int worldHeight = 1200;
+    private int cameraX = 0;
+    private int cameraY = 0;
+    private final int SCREEN_WIDTH = 800;
+    private final int SCREEN_HEIGHT = 600;
+
     public Map(int numPuzzlePieces, int numTraps, Player player) {
         traps = new ArrayList<>();
-        backgroundImage = ImageManager.getImage("background");
+        backgroundImage = ImageManager.getImage("background")
+                .getScaledInstance(worldWidth, worldHeight, Image.SCALE_SMOOTH);
 
         this.player = player;
         puzzlePieces = new ArrayList<>();
@@ -25,8 +35,8 @@ public class Map {
             
             int x,y;
             do {
-                x = rand.nextInt(660) + 100;
-                y = rand.nextInt(460) + 50;
+                x = rand.nextInt(worldWidth - 200) + 100;
+                y = rand.nextInt(worldHeight - 200) + 50;
             } while(isOverlapping(x, y, traps));
             if(i % 2 == 0) {
                 traps.add(new Trap(x, y, "trap_2"));
@@ -40,8 +50,8 @@ public class Map {
             
             int x,y;
             do {
-                x = rand.nextInt(660) + 100;
-                y = rand.nextInt(460) + 50;
+                x = rand.nextInt(worldWidth - 200) + 100;
+                y = rand.nextInt(worldHeight - 200) + 50;
             } while(isOverlapping(x, y, slowTraps));
             slowTraps.add(new SlowTrap(x, y, "slow_trap"));
         }
@@ -52,8 +62,8 @@ public class Map {
             
             int x,y;
             do {
-                x = rand.nextInt(660) + 100;
-                y = rand.nextInt(460) + 50;
+                x = rand.nextInt(worldWidth - 200) + 100;
+                y = rand.nextInt(worldHeight - 200) + 50;
             } while(isEnemyOverlapping(x, y, enemies));
             if(i % 2 == 0) {
                 enemies.add(new Enemy(x, y, true));
@@ -65,19 +75,30 @@ public class Map {
         for(int i=0; i < numPuzzlePieces; i++) {
             int x,y;
             do {
-                x = rand.nextInt(660) + 100;
-                y = rand.nextInt(460) + 50;
+                x = rand.nextInt(worldWidth - 200) + 100;
+                y = rand.nextInt(worldHeight - 200) + 50;
             } while(isOverlapping(x, y, puzzlePieces));
             puzzlePieces.add(new PuzzlePiece(x, y, "puzzle_piece"));
         }
 
         int treasureX, treasureY;
         do {
-            treasureX = rand.nextInt(660) + 100;
-            treasureY = rand.nextInt(460) + 50;
+            treasureX = rand.nextInt(worldWidth - 200) + 100;
+            treasureY = rand.nextInt(worldHeight - 200) + 50;
         } while(isOverlapping(treasureX, treasureY, puzzlePieces));
         treasure = new TreasureChest(700, 500, "treasure", "open_chest");
 
+    }
+
+    public void updateCamera() {
+        //Center player
+        cameraX = player.getX() - (SCREEN_WIDTH / 2);
+        cameraY = player.getY() - (SCREEN_HEIGHT / 2);
+
+        //Clamp camera to world limits
+        cameraX = Math.max(0, Math.min(cameraX, worldWidth - SCREEN_WIDTH));
+        cameraY = Math.max(0, Math.min(cameraY, worldHeight - SCREEN_HEIGHT));
+       
     }
 
     private boolean isEnemyOverlapping(int x, int y, List<Enemy> enemyList) {
@@ -119,32 +140,32 @@ public class Map {
     }
 
     public void draw(Graphics g) {
-
+        updateCamera();
         if(backgroundImage != null) {
-            g.drawImage(backgroundImage, 0, 0, 800, 600, null);
+            g.drawImage(backgroundImage,-cameraX,-cameraY, null);
         } else {
             g.setColor(Color.BLACK);
             g.fillRect(0, 0, 800, 600);
         }
         for(Entity trap: traps) {
-            trap.draw(g);
+            trap.draw(g, cameraX, cameraY);
            // System.out.println("Drawing trap: " + trap.getX() + " " + trap.getY());
         }
 
         for(Entity piece: puzzlePieces) {
-            piece.draw(g);
+            piece.draw(g, cameraX, cameraY);
         }
 
         for(Entity trap: slowTraps) {
-            trap.draw(g);
+            trap.draw(g, cameraX, cameraY);
         }
 
         for (Enemy enemy: enemies) {            
-            enemy.draw(g);
+            enemy.draw(g, cameraX, cameraY);
         }
 
         if(puzzlePieces.isEmpty()) {
-            treasure.draw(g);
+            treasure.draw(g, cameraX, cameraY);
         }
     }
 
@@ -166,5 +187,13 @@ public class Map {
 
     public TreasureChest getTreasure() {
         return treasure;
+    }
+
+    public int getCameraX() {
+        return cameraX;
+    }
+
+    public int getCameraY() {
+        return cameraY;
     }
 }

@@ -200,23 +200,27 @@ public class Player extends Entity implements KeyListener {
 
         int effectiveSpeed = (int) (speed * speedModifier);
         if (key == KeyEvent.VK_UP) {
-            if(y - effectiveSpeed <= 0) return;
+           // if(y - effectiveSpeed <= 0) return;
              y -= effectiveSpeed;
+             if(y < 0) y = WORLD_HEIGHT;
              direction = "up";
         }
         if (key == KeyEvent.VK_DOWN) {
-            if(y + effectiveSpeed >= 536) return;
+            //if(y + effectiveSpeed >= 536) return;
              y += effectiveSpeed;
+             if (y > WORLD_HEIGHT) y = 0;
              direction = "down";
         }
         if (key == KeyEvent.VK_LEFT) {
-            if(x - effectiveSpeed <= 0) return;
+            //if(x - effectiveSpeed <= 0) return;
              x -= effectiveSpeed;
+             if (x < 0) x = WORLD_WIDTH;
              direction = "left";
         }
         if (key == KeyEvent.VK_RIGHT) {
-            if(x + effectiveSpeed >= 736) return;
-            x += speed;
+            //if(x + effectiveSpeed >= 736) return;
+            x += effectiveSpeed;
+            if (x > WORLD_WIDTH) x = 0;
             direction = "right";
         }
 
@@ -241,42 +245,45 @@ public class Player extends Entity implements KeyListener {
     }
 
     @Override
-    public void draw(Graphics g) {
+    public void draw(Graphics g, int cameraX, int cameraY) {
+        int screenX = x - cameraX;
+        int screenY = y - cameraY;
+        
         if(isCollapsed) {
-            g.drawImage(collapseGIF.getImage(), x, y, null);
+            g.drawImage(collapseGIF.getImage(), screenX, screenY, null);
         }else if(isMoving) {
             Animation currentAnimation = getAnimationForDirection(direction);
             if (!currentAnimation.isStillActive()) currentAnimation.start();
             currentAnimation.update();
-            g.drawImage(currentAnimation.getImage(), x, y, null);
+            g.drawImage(currentAnimation.getImage(), screenX, screenY, null);
         }else if(isHealing) {   
             Animation currentAnimation = healAnimation;
             if(!currentAnimation.isStillActive()) currentAnimation.start();
             currentAnimation.update();
             if(!currentAnimation.isStillActive()) isHealing = false;
-            g.drawImage(currentAnimation.getImage(), x, y, null);
+            g.drawImage(currentAnimation.getImage(), screenX, screenY, null);
         }else if(isBlocking) {  
             Animation currentAnimation = blockAnimation;
             if(!currentAnimation.isStillActive()) currentAnimation.start();
             currentAnimation.update();
-            g.drawImage(currentAnimation.getImage(), x, y, null);
+            g.drawImage(currentAnimation.getImage(), screenX, screenY, null);
         }else if(attacking) {
             Animation currentAnimation = attackAnimation;
             if(!currentAnimation.isStillActive()) currentAnimation.start();
             currentAnimation.update();
             if(!currentAnimation.isStillActive()) attacking = false;
-            g.drawImage(currentAnimation.getImage(), x, y, null);
+            g.drawImage(currentAnimation.getImage(), screenX, screenY, null);
         }else {
             Animation currentAnimation = idleAnimation;
             if(!currentAnimation.isStillActive()) currentAnimation.start();
             currentAnimation.update();
-            g.drawImage(currentAnimation.getImage(), x, y, null);
+            g.drawImage(currentAnimation.getImage(), screenX, screenY, null);
         }
 
         g.setColor(Color.RED);
-        g.fillRect(x, y -10, width, 5);
+        g.fillRect(screenX, screenY -10, width, 5);
         g.setColor(Color.GREEN);
-        g.fillRect(x, y - 10, (int) (width * (health / (float) maxHealth)), 5);
+        g.fillRect(screenX, screenY - 10, (int) (width * (health / (float) maxHealth)), 5);
     }
 
     private Animation getAnimationForDirection(String direction) {

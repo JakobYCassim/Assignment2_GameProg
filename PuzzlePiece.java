@@ -9,8 +9,11 @@ public class PuzzlePiece extends Entity {
     }
 
     @Override
-    public void draw(Graphics g) {
-        g.drawImage(icon.getImage(), x, y, null);
+    public void draw(Graphics g, int cameraX, int cameraY) {
+        int screenX = x - cameraX;
+        int screenY = y - cameraY;
+        
+        g.drawImage(icon.getImage(), screenX, screenY, null);
     }
     
 }

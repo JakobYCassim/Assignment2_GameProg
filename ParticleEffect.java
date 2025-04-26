@@ -34,9 +34,9 @@ public class ParticleEffect {
         }
     }
 
-    public void draw(Graphics g) {
+    public void draw(Graphics g, int cameraX, int cameraY) {
         for (Particle p : particles) {
-            p.draw(g);
+            p.draw(g, cameraX, cameraY);
         }
     }
 

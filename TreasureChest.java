@@ -11,12 +11,15 @@ public class TreasureChest extends Entity{
     }
 
     @Override
-    public void draw(Graphics g) {
+    public void draw(Graphics g, int cameraX, int cameraY) {
+        int screenX = x - cameraX;
+        int screenY = y - cameraY;
+        
         if (isOpen) {
             //System.out.println("Chest opened!");
-            g.drawImage(chestGIF.getImage(), x, y, null);
+            g.drawImage(chestGIF.getImage(), screenX , screenY, null);
         } else {
-            g.drawImage(chestImage, x, y, null);
+            g.drawImage(chestImage, screenX, screenY, null);
         }
     }
 

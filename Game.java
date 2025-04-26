@@ -202,12 +202,13 @@ public class Game extends JPanel {
         @Override
         public void paintComponent(Graphics g) {
             super.paintComponent(g);
+            map.updateCamera();
             map.draw(g);
-            player.draw(g);
+            player.draw(g, map.getCameraX(), map.getCameraY());
     
             particleEffects.removeIf(ParticleEffect::isFinished);
             for (ParticleEffect effect : particleEffects) {
-                effect.draw(g);
+                effect.draw(g, map.getCameraX(), map.getCameraY());
             }
 
             g.setColor(Color.WHITE);

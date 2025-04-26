@@ -21,10 +21,12 @@ public class Particle {
         lifespan--;        
     }
 
-    public void draw(Graphics g) {
+    public void draw(Graphics g, int cameraX, int cameraY) {
         if (lifespan > 0) {
+            int screenX = x - cameraX;
+            int screenY = y - cameraY;
             g.setColor(color);
-            g.fillOval(x, y, size, size);
+            g.fillOval(screenX, screenY, size, size);
         }
     }
 

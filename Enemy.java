@@ -227,23 +227,26 @@ public class Enemy extends Entity{
     }
 
     @Override
-    public void draw(Graphics g) {
+    public void draw(Graphics g, int cameraX, int cameraY) {
+        int screenX = x - cameraX;
+        int screenY = y - cameraY;
+        
         if (isDead()) {
             deathAnimation.update();
-            g.drawImage(deathAnimation.getImage(), x, y, null);
+            g.drawImage(deathAnimation.getImage(), screenX, screenY, null);
              return;
         }
 
         if (isAttacking) {
-            g.drawImage(attackAnimation.getImage(), x, y, null);
+            g.drawImage(attackAnimation.getImage(), screenX, screenY, null);
         } else {
-            g.drawImage(walkAnimation.getImage(), x, y, null);
+            g.drawImage(walkAnimation.getImage(), screenX, screenY, null);
         }
 
         g.setColor(Color.RED);
-        g.fillRect(x, y - 10, width, 5);
+        g.fillRect(screenX, screenY - 10, width, 5);
         g.setColor(Color.GREEN);
-        g.fillRect(x, y - 10, (int) (width * (health / (float) maxHealth)), 5);
+        g.fillRect(screenX, screenY - 10, (int) (width * (health / (float) maxHealth)), 5);
     }
     
 }

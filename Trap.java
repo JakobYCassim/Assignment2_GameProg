@@ -32,9 +32,11 @@ public class Trap extends Entity {
     }
 
     @Override
-    public void draw(Graphics g) {
+    public void draw(Graphics g, int cameraX, int cameraY) {
         if (trapImage != null && visible) {
-            g.drawImage(trapImage, x, y, null);
+            int screenX = x - cameraX;
+            int screenY = y - cameraY;
+            g.drawImage(trapImage, screenX, screenY, null);
            // System.out.println("Drawing trap at (" + x + ", " + y + ")");
         }
 
